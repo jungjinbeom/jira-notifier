@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useJira } from "./hooks/useJira";
-import { Layout } from "./components/layout/Layout";
-import { Settings } from "./components/settings/Settings";
-import { NotificationList } from "./components/notifications/NotificationList";
-import { TicketList } from "./components/tickets/TicketList";
-import { ASSIGNED_TAB, UNASSIGNED_TAB } from "./components/tickets/ticketTabs";
-import type { Tab } from "./types";
+import { useJira } from "@/hooks/useJira";
+import { Layout } from "@/components/layout/Layout";
+import { Settings } from "@/components/settings/Settings";
+import { NotificationList } from "@/components/notifications/NotificationList";
+import { TicketList } from "@/components/tickets/TicketList";
+import { ASSIGNED_TAB, UNASSIGNED_TAB } from "@/components/tickets/ticketTabs";
+import type { Tab } from "@/types";
 
 const App = () => {
   const [tab, setTab] = useState<Tab>("notifications");

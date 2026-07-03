@@ -1,5 +1,5 @@
-import type { UnassignedTicket } from "../../types";
-import { timeAgo } from "../../utils/time";
+import type { UnassignedTicket } from "@/types";
+import { timeAgo } from "@/utils/time";
 
 interface Props {
   ticket: UnassignedTicket;

@@ -1,5 +1,5 @@
-import type { JiraNotification } from "../../types";
-import { timeAgo } from "../../utils/time";
+import type { JiraNotification } from "@/types";
+import { timeAgo } from "@/utils/time";
 
 interface Props {
   notification: JiraNotification;

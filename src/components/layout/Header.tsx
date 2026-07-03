@@ -26,7 +26,7 @@ export const Header = ({ isActive, loading, onStart, onStop }: Props) => {
           disabled={loading}
           title={isActive ? "모니터링 중지" : "모니터링 시작"}
         >
-          {isActive ? "⏸" : "▶"}
+          {isActive ? "⏸︎" : "▶︎"}
         </button>
       </div>
     </div>

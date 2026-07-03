@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import type { JiraConfig } from "../../types";
-import { FormField } from "../common/FormField";
-import { Button } from "../common/Button";
+import type { JiraConfig } from "@/types";
+import { FormField } from "@/components/common/FormField";
+import { Button } from "@/components/common/Button";
 
 interface Props {
   config: JiraConfig;

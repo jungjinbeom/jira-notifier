@@ -1,4 +1,4 @@
-import { useTheme } from "../../hooks/useTheme";
+import { useTheme } from "@/hooks/useTheme";
 
 /** 다크/라이트 테마 전환 버튼. 테마 상태를 스스로 소유한다. */
 export const ThemeToggle = () => {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import type { PollingStatus } from "../types";
-import { api } from "../api";
+import type { PollingStatus } from "@/types";
+import { api } from "@/api";
 import type { ToastType } from "./useToast";
 
 interface Params {

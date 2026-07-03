@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import type { Tab } from "../../types";
-import type { Toast } from "../../hooks/useToast";
+import type { Tab } from "@/types";
+import type { Toast } from "@/hooks/useToast";
 import { Header } from "./Header";
 import { TabBar } from "./TabBar";
 
