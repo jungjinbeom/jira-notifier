@@ -53,10 +53,9 @@ jobs:
       - name: Rust cache
         uses: swatinem/rust-cache@v2
         with:
-          workspaces: "./jira-notifier/src-tauri -> target"
+          workspaces: "./src-tauri -> target"
 
       - name: Install frontend dependencies
-        working-directory: jira-notifier
         run: npm install
 
       - name: Build app and publish release
@@ -64,8 +63,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          # Tauri 앱이 저장소 루트가 아니라 jira-notifier/ 하위에 있다.
-          projectPath: jira-notifier
           # 버전은 tauri.conf.json 값(__VERSION__)에서 자동으로 채워진다.
           tagName: v__VERSION__
           releaseName: "Jira Notifier v__VERSION__"
