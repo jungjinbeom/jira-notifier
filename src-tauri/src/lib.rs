@@ -339,26 +339,24 @@ async fn refresh_my_tickets(
     Ok(tickets)
 }
 
-/// 알림 읽음 처리
+/// 알림 읽음 처리: 읽은 알림은 목록에서 제거한다.
+/// seen_ids에는 ID가 남아 있으므로 폴링이 같은 알림을 다시 가져오지 않는다.
 #[tauri::command]
 async fn mark_as_read(
     state: State<'_, AppState>,
     id: String,
 ) -> Result<(), String> {
     let mut notifications = state.notifications.lock().await;
-    if let Some(n) = notifications.iter_mut().find(|n| n.id == id) {
-        n.read = true;
-    }
+    notifications.retain(|n| n.id != id);
     Ok(())
 }
 
-/// 모든 알림 읽음 처리
+/// 모든 알림 읽음 처리: 목록을 비운다(읽음 = 제거).
+/// seen_ids는 유지하므로 재알림되지 않는다.
 #[tauri::command]
 async fn mark_all_read(state: State<'_, AppState>) -> Result<(), String> {
     let mut notifications = state.notifications.lock().await;
-    for n in notifications.iter_mut() {
-        n.read = true;
-    }
+    notifications.clear();
     Ok(())
 }
 

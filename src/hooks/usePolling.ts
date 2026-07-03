@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { PollingStatus } from "@/types";
 import { api } from "@/api";
 import type { ToastType } from "./useToast";
@@ -19,21 +19,21 @@ const INITIAL_STATUS: PollingStatus = {
 export const usePolling = ({ setLoading, showMessage }: Params) => {
   const [status, setStatus] = useState<PollingStatus>(INITIAL_STATUS);
 
-  const loadStatus = async () => {
+  const loadStatus = useCallback(async () => {
     try {
       setStatus(await api.getStatus());
     } catch (e) {
       console.error("상태 로드 실패:", e);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadStatus();
     const interval = setInterval(loadStatus, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [loadStatus]);
 
-  const startPolling = async () => {
+  const startPolling = useCallback(async () => {
     setLoading(true);
     try {
       const result = await api.startPolling();
@@ -44,9 +44,9 @@ export const usePolling = ({ setLoading, showMessage }: Params) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [loadStatus, setLoading, showMessage]);
 
-  const stopPolling = async () => {
+  const stopPolling = useCallback(async () => {
     setLoading(true);
     try {
       const result = await api.stopPolling();
@@ -57,7 +57,7 @@ export const usePolling = ({ setLoading, showMessage }: Params) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [loadStatus, setLoading, showMessage]);
 
   // status/setStatus는 알림 카운트 갱신을 위해 상위(파사드)에서 useNotifications로 전달된다
   return { status, setStatus, startPolling, stopPolling };
