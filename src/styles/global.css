@@ -28,6 +28,37 @@
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
+/* ─── Light theme overrides ─── */
+:root[data-theme="light"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f4f6f9;
+  --bg-card: #ffffff;
+  --bg-hover: #eef1f6;
+  --bg-input: #ffffff;
+
+  --text-primary: #1a1d26;
+  --text-secondary: #5a6072;
+  --text-muted: #9aa0b0;
+
+  --border: #e2e6ee;
+
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* 테마 전환 시 색상이 부드럽게 바뀌도록 */
+body,
+.header,
+.tab-bar,
+.notification-card,
+.form-input,
+.power-btn,
+.theme-toggle {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -512,6 +543,32 @@ body {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
   }
+}
+
+/* ─── Header Actions / Theme Toggle ─── */
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-toggle {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  transition: all 0.15s;
+}
+
+.theme-toggle:hover {
+  background: var(--bg-hover);
 }
 
 /* ─── Power Button ─── */

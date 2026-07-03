@@ -1,3 +1,5 @@
+import { ThemeToggle } from "./ThemeToggle";
+
 interface Props {
   isActive: boolean;
   loading: boolean;
@@ -16,14 +18,17 @@ export const Header = ({ isActive, loading, onStart, onStop }: Props) => {
         </span>
       </div>
 
-      <button
-        className={`power-btn ${isActive ? "active" : ""}`}
-        onClick={isActive ? onStop : onStart}
-        disabled={loading}
-        title={isActive ? "모니터링 중지" : "모니터링 시작"}
-      >
-        {isActive ? "⏸" : "▶"}
-      </button>
+      <div className="header-actions">
+        <ThemeToggle />
+        <button
+          className={`power-btn ${isActive ? "active" : ""}`}
+          onClick={isActive ? onStop : onStart}
+          disabled={loading}
+          title={isActive ? "모니터링 중지" : "모니터링 시작"}
+        >
+          {isActive ? "⏸" : "▶"}
+        </button>
+      </div>
     </div>
   );
 }
