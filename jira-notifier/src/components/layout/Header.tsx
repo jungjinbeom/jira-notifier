@@ -6,7 +6,7 @@ interface Props {
 }
 
 /** 앱 상단 헤더: 상태 표시등 + 로고 + 모니터링 시작/중지 버튼 */
-export function Header({ isActive, loading, onStart, onStop }: Props) {
+export const Header = ({ isActive, loading, onStart, onStop }: Props) => {
   return (
     <div className="header">
       <div className="header-left">

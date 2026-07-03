@@ -16,7 +16,7 @@ const INITIAL_STATUS: PollingStatus = {
 };
 
 /** 폴링 상태(status) 보유 + 시작/중지 + 5초 주기 갱신 */
-export function usePolling({ setLoading, showMessage }: Params) {
+export const usePolling = ({ setLoading, showMessage }: Params) => {
   const [status, setStatus] = useState<PollingStatus>(INITIAL_STATUS);
 
   const loadStatus = async () => {

@@ -23,7 +23,7 @@ interface Props {
 }
 
 /** 앱의 시각적 셸: 헤더 + 탭바 + 콘텐츠 영역 + 토스트 배치를 담당한다. */
-export function Layout({
+export const Layout = ({
   isActive,
   loading,
   onStart,
@@ -35,7 +35,7 @@ export function Layout({
   unassignedCount,
   message,
   children,
-}: Props) {
+}: Props) => {
   return (
     <div className="app">
       <Header

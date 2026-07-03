@@ -7,7 +7,7 @@ interface Props {
 }
 
 /** 알림 한 건을 표시하는 카드 */
-export function NotificationCard({ notification: n, onClick }: Props) {
+export const NotificationCard = ({ notification: n, onClick }: Props) => {
   const isMention = n.notification_type === "Mention";
   const typeClass = isMention ? "mention" : "assigned";
 

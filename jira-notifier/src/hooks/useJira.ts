@@ -11,7 +11,7 @@ import { usePolling } from "./usePolling";
  * loading은 설정·폴링이 공유하는 플래그라 파사드가 보유하고 주입한다.
  * status는 usePolling이 보유하되, 알림 카운트를 useNotifications가 함께 갱신한다.
  */
-export function useJira() {
+export const useJira = () => {
   const { message, showMessage } = useToast();
   const [loading, setLoading] = useState(false);
 

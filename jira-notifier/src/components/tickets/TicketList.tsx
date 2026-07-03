@@ -14,7 +14,7 @@ interface Props {
   emptyDesc: string;
 }
 
-export function TicketList({
+export const TicketList = ({
   tickets,
   onRefresh,
   countLabel,
@@ -23,7 +23,7 @@ export function TicketList({
   emptyIcon,
   emptyTitle,
   emptyDesc,
-}: Props) {
+}: Props) => {
   const handleClick = (ticket: UnassignedTicket) => openUrl(ticket.url);
 
   return (

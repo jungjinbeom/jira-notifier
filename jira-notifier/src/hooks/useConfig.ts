@@ -18,7 +18,7 @@ const EMPTY_CONFIG: JiraConfig = {
 };
 
 /** Jira 설정 상태 + 저장/연결테스트 */
-export function useConfig({ setLoading, showMessage }: Params) {
+export const useConfig = ({ setLoading, showMessage }: Params) => {
   const [config, setConfig] = useState<JiraConfig>(EMPTY_CONFIG);
 
   useEffect(() => {

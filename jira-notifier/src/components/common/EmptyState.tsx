@@ -7,7 +7,7 @@ interface Props {
 }
 
 /** 목록이 비었을 때 보여주는 안내 블록 (알림/티켓 공용) */
-export function EmptyState({ icon, title, desc }: Props) {
+export const EmptyState = ({ icon, title, desc }: Props) => {
   return (
     <div className="empty-state">
       <div className="empty-icon">{icon}</div>
