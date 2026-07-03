@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { JiraConfig } from "../../types";
 import { FormField } from "../common/FormField";
+import { Button } from "../common/Button";
 
 interface Props {
   config: JiraConfig;
@@ -97,20 +98,21 @@ export const Settings = ({ config, loading, onSave, onTest }: Props) => {
 
       {/* 버튼 */}
       <div className="btn-group">
-        <button
-          className="btn btn-secondary"
+        <Button
+          variant="secondary"
           disabled={loading || !form.base_url || !form.email || !form.api_token}
           onClick={() => onTest(form)}
         >
           {loading ? "테스트 중..." : "연결 테스트"}
-        </button>
-        <button
-          className="btn btn-primary btn-full"
+        </Button>
+        <Button
+          variant="primary"
+          fullWidth
           disabled={loading}
           onClick={() => onSave(form)}
         >
           설정 저장
-        </button>
+        </Button>
       </div>
     </div>
   );

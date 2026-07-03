@@ -1,6 +1,7 @@
 import type { UnassignedTicket } from "../../types";
 import { openUrl } from "../../utils/url";
 import { EmptyState } from "../common/EmptyState";
+import { ActionButton } from "../common/ActionButton";
 import { TicketCard } from "./TicketCard";
 
 interface Props {
@@ -33,9 +34,7 @@ export const TicketList = ({
           {countLabel} {tickets.length}건
         </span>
         <div className="notifications-header-actions">
-          <button className="notif-action-btn" onClick={onRefresh}>
-            새로고침
-          </button>
+          <ActionButton onClick={onRefresh}>새로고침</ActionButton>
         </div>
       </div>
 
