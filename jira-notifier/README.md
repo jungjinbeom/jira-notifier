@@ -17,7 +17,34 @@ Jira 멘션 및 담당자 지정 알림을 Windows 데스크톱 알림으로 받
 
 ---
 
-## 사전 준비
+## 설치 (일반 사용자)
+
+개발 도구 없이 바로 사용하려면 **[Releases](https://github.com/jungjinbeom/jira-notifier/releases)** 페이지에서 사용하는 OS에 맞는 설치 파일을 내려받으세요.
+
+| OS | 내려받을 파일 |
+|----|------|
+| Windows | `.msi` 또는 `..._x64-setup.exe` |
+| macOS (Apple Silicon) | `..._aarch64.dmg` |
+| macOS (Intel) | `..._x64.dmg` |
+| Linux | `.AppImage` 또는 `.deb` |
+
+### 첫 실행 시 보안 경고 우회
+
+코드 서명이 되어 있지 않아 처음 실행할 때 OS 보안 경고가 표시됩니다. 아래 방법으로 실행하면 됩니다.
+
+- **Windows**: "Windows의 PC 보호" 창이 뜨면 → **추가 정보** → **실행** 클릭
+- **macOS**: 앱을 **우클릭 → 열기 → 열기** (또는 시스템 설정 → 개인정보 보호 및 보안 → "확인 없이 열기")
+- **Linux (AppImage)**: 실행 권한을 준 뒤 실행
+  ```bash
+  chmod +x Jira*.AppImage
+  ./Jira*.AppImage
+  ```
+
+> 설치 후 사용법은 아래 [사용 방법](#사용-방법)을 참고하세요.
+
+---
+
+## 사전 준비 (소스에서 직접 빌드하는 경우)
 
 ### 1. 개발 도구 설치
 
@@ -58,6 +85,21 @@ cargo tauri build
 ```
 
 빌드 결과물 위치: `src-tauri/target/release/bundle/`
+
+---
+
+## 릴리스 배포 (메인테이너용)
+
+`v`로 시작하는 버전 태그를 push하면 GitHub Actions가 Windows/macOS/Linux 설치 파일을 자동으로 빌드하여 **Release 초안**으로 첨부합니다. (`.github/workflows/release.yml`)
+
+```bash
+# 1. 버전 올리기: src-tauri/tauri.conf.json 과 package.json 의 version 을 함께 수정 (예: 1.0.1)
+# 2. 변경사항 커밋 후 태그 push
+git tag v1.0.1
+git push origin v1.0.1
+```
+
+빌드가 끝나면 [Releases](https://github.com/jungjinbeom/jira-notifier/releases)에 초안이 생성됩니다. 내용을 확인한 뒤 **Publish release**를 눌러 공개하세요.
 
 ---
 
