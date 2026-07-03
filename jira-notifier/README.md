@@ -118,16 +118,18 @@ git push origin v1.0.1
 ```
 jira-notifier/
 ├── src/                        # React 프론트엔드
-│   ├── components/
-│   │   ├── Settings.tsx        # 설정 화면
-│   │   └── NotificationList.tsx # 알림 목록
-│   ├── hooks/
-│   │   └── useJira.ts          # Tauri IPC 훅
-│   ├── types/
-│   │   └── index.ts            # 타입 정의
-│   ├── styles/
-│   │   └── global.css          # 전역 스타일
-│   ├── App.tsx                 # 메인 컴포넌트
+│   ├── components/             # 관심사별 컴포넌트
+│   │   ├── common/             # 공용 UI (EmptyState, FormField)
+│   │   ├── layout/             # 앱 셸 (Layout, Header, TabBar)
+│   │   ├── notifications/      # 알림 목록/카드
+│   │   ├── tickets/            # 티켓 목록/카드
+│   │   └── settings/           # 설정 화면
+│   ├── hooks/                  # 도메인 훅 (useJira 파사드 + useConfig/usePolling 등)
+│   ├── utils/                  # timeAgo, openUrl 등 유틸
+│   ├── types/index.ts          # 타입 정의
+│   ├── styles/global.css       # 전역 스타일
+│   ├── api.ts                  # Tauri IPC 래퍼 (invoke 명령 모음)
+│   ├── App.tsx                 # 상태 배선 + 탭 라우팅
 │   └── main.tsx                # 엔트리
 ├── src-tauri/                  # Rust 백엔드
 │   ├── src/
