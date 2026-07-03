@@ -9,7 +9,7 @@ interface Params {
 }
 
 /** CS 미배정 + 내 담당(진행중) 티켓 목록. 폴링 이벤트로 실시간 갱신 */
-export function useTickets({ showMessage }: Params) {
+export const useTickets = ({ showMessage }: Params) => {
   const [unassigned, setUnassigned] = useState<UnassignedTicket[]>([]);
   const [myTickets, setMyTickets] = useState<UnassignedTicket[]>([]);
 

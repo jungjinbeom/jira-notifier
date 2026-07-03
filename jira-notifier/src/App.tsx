@@ -7,7 +7,7 @@ import { TicketList } from "./components/tickets/TicketList";
 import { ASSIGNED_TAB, UNASSIGNED_TAB } from "./components/tickets/ticketTabs";
 import type { Tab } from "./types";
 
-export default function App() {
+const App = () => {
   const [tab, setTab] = useState<Tab>("notifications");
 
   const {
@@ -74,4 +74,6 @@ export default function App() {
       )}
     </Layout>
   );
-}
+};
+
+export default App;

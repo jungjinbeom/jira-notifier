@@ -10,7 +10,7 @@ interface Params {
 }
 
 /** 알림 목록 + 읽음/삭제 + 실시간 수신. status 카운트도 함께 갱신 */
-export function useNotifications({ setStatus }: Params) {
+export const useNotifications = ({ setStatus }: Params) => {
   const [notifications, setNotifications] = useState<JiraNotification[]>([]);
 
   useEffect(() => {

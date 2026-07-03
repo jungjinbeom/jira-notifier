@@ -6,10 +6,10 @@ import { listen } from "@tauri-apps/api/event";
  * 핸들러는 ref에 담아 최신값을 유지하므로, 이벤트 이름이 바뀌지 않는 한
  * 마운트 시 1회만 구독한다(기존 useEffect([]) 동작과 동일).
  */
-export function useTauriEvent<T>(
+export const useTauriEvent = <T,>(
   name: string,
   handler: (payload: T) => void
-): void {
+): void => {
   const handlerRef = useRef(handler);
   handlerRef.current = handler;
 

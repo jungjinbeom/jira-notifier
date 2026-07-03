@@ -1,5 +1,5 @@
 /** ISO 타임스탬프를 "방금 전 / N분 전 / N시간 전 / N일 전"으로 표시 */
-export function timeAgo(timestamp: string): string {
+export const timeAgo = (timestamp: string): string => {
   try {
     const date = new Date(timestamp);
     const now = new Date();

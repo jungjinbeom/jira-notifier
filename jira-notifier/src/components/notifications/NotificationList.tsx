@@ -10,12 +10,12 @@ interface Props {
   onClear: () => void;
 }
 
-export function NotificationList({
+export const NotificationList = ({
   notifications,
   onMarkRead,
   onMarkAllRead,
   onClear,
-}: Props) {
+}: Props) => {
   const handleClick = (notification: JiraNotification) => {
     if (!notification.read) {
       onMarkRead(notification.id);

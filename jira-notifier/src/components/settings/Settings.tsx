@@ -9,7 +9,7 @@ interface Props {
   onTest: (config: JiraConfig) => void;
 }
 
-export function Settings({ config, loading, onSave, onTest }: Props) {
+export const Settings = ({ config, loading, onSave, onTest }: Props) => {
   const [form, setForm] = useState<JiraConfig>(config);
 
   useEffect(() => {

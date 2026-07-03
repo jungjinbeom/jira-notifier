@@ -8,7 +8,7 @@ export interface Toast {
 }
 
 /** 4초 후 자동 사라지는 토스트 메시지 상태 */
-export function useToast() {
+export const useToast = () => {
   const [message, setMessage] = useState<Toast | null>(null);
 
   const showMessage = useCallback((text: string, type: ToastType) => {

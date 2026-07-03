@@ -15,13 +15,13 @@ interface TabDef {
 }
 
 /** 알림/배정/미배정/설정 탭 전환 바 (배지는 0이면 숨김) */
-export function TabBar({
+export const TabBar = ({
   active,
   onChange,
   unreadCount,
   assignedCount,
   unassignedCount,
-}: Props) {
+}: Props) => {
   const tabs: TabDef[] = [
     { id: "notifications", label: "알림", badge: unreadCount },
     { id: "assigned", label: "배정", badge: assignedCount },

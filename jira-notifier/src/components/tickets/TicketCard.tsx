@@ -9,7 +9,7 @@ interface Props {
 }
 
 /** 티켓 한 건을 표시하는 카드 (미배정/내 담당 공용) */
-export function TicketCard({ ticket: t, icon, showReporter, onClick }: Props) {
+export const TicketCard = ({ ticket: t, icon, showReporter, onClick }: Props) => {
   return (
     <div className="notification-card assigned" onClick={() => onClick(t)}>
       <div className="notif-icon assigned">{icon}</div>
