@@ -1,6 +1,7 @@
 import type { JiraNotification } from "../../types";
 import { openUrl } from "../../utils/url";
 import { EmptyState } from "../common/EmptyState";
+import { ActionButton } from "../common/ActionButton";
 import { NotificationCard } from "./NotificationCard";
 
 interface Props {
@@ -40,12 +41,8 @@ export const NotificationList = ({
           총 {notifications.length}건
         </span>
         <div className="notifications-header-actions">
-          <button className="notif-action-btn" onClick={onMarkAllRead}>
-            모두 읽음
-          </button>
-          <button className="notif-action-btn" onClick={onClear}>
-            전체 삭제
-          </button>
+          <ActionButton onClick={onMarkAllRead}>모두 읽음</ActionButton>
+          <ActionButton onClick={onClear}>전체 삭제</ActionButton>
         </div>
       </div>
 
