@@ -1,5 +1,7 @@
 /** TicketList 탭(배정/미배정)의 표시 설정 데이터. App JSX에서 분리. */
 export interface TicketTabConfig {
+  /** TicketsContext에서 어떤 슬라이스를 볼지 결정하는 판별자. */
+  source: "assigned" | "unassigned";
   countLabel: string;
   cardIcon: string;
   showReporter: boolean;
@@ -9,6 +11,7 @@ export interface TicketTabConfig {
 }
 
 export const ASSIGNED_TAB: TicketTabConfig = {
+  source: "assigned",
   countLabel: "내 담당(진행중)",
   cardIcon: "🙋",
   showReporter: true,
@@ -19,6 +22,7 @@ export const ASSIGNED_TAB: TicketTabConfig = {
 };
 
 export const UNASSIGNED_TAB: TicketTabConfig = {
+  source: "unassigned",
   countLabel: "CS 미배정",
   cardIcon: "🎫",
   showReporter: true,

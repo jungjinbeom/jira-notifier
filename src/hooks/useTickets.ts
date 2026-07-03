@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { UnassignedTicket } from "@/types";
 import { api } from "@/api";
 import { useTauriEvent } from "./useTauriEvent";
@@ -27,21 +27,21 @@ export const useTickets = ({ showMessage }: Params) => {
   useTauriEvent<UnassignedTicket[]>("unassigned-updated", setUnassigned);
   useTauriEvent<UnassignedTicket[]>("my-tickets-updated", setMyTickets);
 
-  const refreshUnassigned = async () => {
+  const refreshUnassigned = useCallback(async () => {
     try {
       setUnassigned(await api.refreshUnassigned());
     } catch (e) {
       showMessage(`${e}`, "error");
     }
-  };
+  }, [showMessage]);
 
-  const refreshMyTickets = async () => {
+  const refreshMyTickets = useCallback(async () => {
     try {
       setMyTickets(await api.refreshMyTickets());
     } catch (e) {
       showMessage(`${e}`, "error");
     }
-  };
+  }, [showMessage]);
 
   return { unassigned, myTickets, refreshUnassigned, refreshMyTickets };
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { JiraConfig } from "@/types";
 import { api } from "@/api";
 import type { ToastType } from "./useToast";
@@ -28,30 +28,36 @@ export const useConfig = ({ setLoading, showMessage }: Params) => {
       .catch((e) => console.error("설정 로드 실패:", e));
   }, []);
 
-  const saveConfig = async (newConfig: JiraConfig) => {
-    setLoading(true);
-    try {
-      await api.saveConfig(newConfig);
-      setConfig(newConfig);
-      showMessage("설정이 저장되었습니다", "success");
-    } catch (e) {
-      showMessage(`저장 실패: ${e}`, "error");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const saveConfig = useCallback(
+    async (newConfig: JiraConfig) => {
+      setLoading(true);
+      try {
+        await api.saveConfig(newConfig);
+        setConfig(newConfig);
+        showMessage("설정이 저장되었습니다", "success");
+      } catch (e) {
+        showMessage(`저장 실패: ${e}`, "error");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setLoading, showMessage]
+  );
 
-  const testConnection = async (testConfig: JiraConfig) => {
-    setLoading(true);
-    try {
-      const result = await api.testConnection(testConfig);
-      showMessage(result, "success");
-    } catch (e) {
-      showMessage(`${e}`, "error");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const testConnection = useCallback(
+    async (testConfig: JiraConfig) => {
+      setLoading(true);
+      try {
+        const result = await api.testConnection(testConfig);
+        showMessage(result, "success");
+      } catch (e) {
+        showMessage(`${e}`, "error");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setLoading, showMessage]
+  );
 
   return { config, saveConfig, testConnection };
 }

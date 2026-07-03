@@ -1,12 +1,5 @@
 import type { Tab } from "@/types";
-
-interface Props {
-  active: Tab;
-  onChange: (tab: Tab) => void;
-  unreadCount: number;
-  assignedCount: number;
-  unassignedCount: number;
-}
+import { useNav, useBadges } from "@/context/contexts";
 
 interface TabDef {
   id: Tab;
@@ -15,13 +8,10 @@ interface TabDef {
 }
 
 /** 알림/배정/미배정/설정 탭 전환 바 (배지는 0이면 숨김) */
-export const TabBar = ({
-  active,
-  onChange,
-  unreadCount,
-  assignedCount,
-  unassignedCount,
-}: Props) => {
+export const TabBar = () => {
+  const { tab: active, setTab: onChange } = useNav();
+  const { unreadCount, assignedCount, unassignedCount } = useBadges();
+
   const tabs: TabDef[] = [
     { id: "notifications", label: "알림", badge: unreadCount },
     { id: "assigned", label: "배정", badge: assignedCount },

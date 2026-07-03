@@ -1,16 +1,11 @@
 import { useState, useEffect } from "react";
 import type { JiraConfig } from "@/types";
+import { useConfigCtx } from "@/context/contexts";
 import { FormField } from "@/components/common/FormField";
 import { Button } from "@/components/common/Button";
 
-interface Props {
-  config: JiraConfig;
-  loading: boolean;
-  onSave: (config: JiraConfig) => void;
-  onTest: (config: JiraConfig) => void;
-}
-
-export const Settings = ({ config, loading, onSave, onTest }: Props) => {
+export const Settings = () => {
+  const { config, loading, onSave, onTest } = useConfigCtx();
   const [form, setForm] = useState<JiraConfig>(config);
 
   useEffect(() => {

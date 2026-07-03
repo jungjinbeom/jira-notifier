@@ -1,14 +1,10 @@
+import { useHeader } from "@/context/contexts";
 import { ThemeToggle } from "./ThemeToggle";
 
-interface Props {
-  isActive: boolean;
-  loading: boolean;
-  onStart: () => void;
-  onStop: () => void;
-}
-
 /** 앱 상단 헤더: 상태 표시등 + 로고 + 모니터링 시작/중지 버튼 */
-export const Header = ({ isActive, loading, onStart, onStop }: Props) => {
+export const Header = () => {
+  const { isActive, loading, onStart, onStop } = useHeader();
+
   return (
     <div className="header">
       <div className="header-left">

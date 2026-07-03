@@ -1,22 +1,14 @@
 import type { JiraNotification } from "@/types";
 import { openUrl } from "@/utils/url";
+import { useNotificationsCtx } from "@/context/contexts";
 import { EmptyState } from "@/components/common/EmptyState";
 import { ActionButton } from "@/components/common/ActionButton";
 import { NotificationCard } from "./NotificationCard";
 
-interface Props {
-  notifications: JiraNotification[];
-  onMarkRead: (id: string) => void;
-  onMarkAllRead: () => void;
-  onClear: () => void;
-}
+export const NotificationList = () => {
+  const { notifications, onMarkRead, onMarkAllRead, onClear } =
+    useNotificationsCtx();
 
-export const NotificationList = ({
-  notifications,
-  onMarkRead,
-  onMarkAllRead,
-  onClear,
-}: Props) => {
   const handleClick = (notification: JiraNotification) => {
     if (!notification.read) {
       onMarkRead(notification.id);

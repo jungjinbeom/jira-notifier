@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import type { JiraNotification, PollingStatus } from "@/types";
 import { api } from "@/api";
@@ -29,32 +29,39 @@ export const useNotifications = ({ setStatus }: Params) => {
     }));
   });
 
-  const markAsRead = async (id: string) => {
+  // 읽은 알림은 목록에서 제거한다(이후 다시 표시되지 않음).
+  const markAsRead = useCallback(
+    async (id: string) => {
+      try {
+        await api.markAsRead(id);
+        setNotifications((prev) => prev.filter((n) => n.id !== id));
+        setStatus((prev) => ({
+          ...prev,
+          notification_count: Math.max(0, prev.notification_count - 1),
+          unread_count: Math.max(0, prev.unread_count - 1),
+        }));
+      } catch (e) {
+        console.error("읽음 처리 실패:", e);
+      }
+    },
+    [setStatus]
+  );
+
+  const markAllRead = useCallback(async () => {
     try {
-      await api.markAsRead(id);
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-      );
+      await api.markAllRead();
+      setNotifications([]);
       setStatus((prev) => ({
         ...prev,
-        unread_count: Math.max(0, prev.unread_count - 1),
+        notification_count: 0,
+        unread_count: 0,
       }));
     } catch (e) {
       console.error("읽음 처리 실패:", e);
     }
-  };
+  }, [setStatus]);
 
-  const markAllRead = async () => {
-    try {
-      await api.markAllRead();
-      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-      setStatus((prev) => ({ ...prev, unread_count: 0 }));
-    } catch (e) {
-      console.error("읽음 처리 실패:", e);
-    }
-  };
-
-  const clearNotifications = async () => {
+  const clearNotifications = useCallback(async () => {
     try {
       await api.clearNotifications();
       setNotifications([]);
@@ -66,7 +73,7 @@ export const useNotifications = ({ setStatus }: Params) => {
     } catch (e) {
       console.error("삭제 실패:", e);
     }
-  };
+  }, [setStatus]);
 
   return { notifications, markAsRead, markAllRead, clearNotifications };
 }
