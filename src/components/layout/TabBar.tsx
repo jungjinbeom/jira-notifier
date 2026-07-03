@@ -1,4 +1,4 @@
-import type { Tab } from "../../types";
+import type { Tab } from "@/types";
 
 interface Props {
   active: Tab;

@@ -1,7 +1,7 @@
-import type { UnassignedTicket } from "../../types";
-import { openUrl } from "../../utils/url";
-import { EmptyState } from "../common/EmptyState";
-import { ActionButton } from "../common/ActionButton";
+import type { UnassignedTicket } from "@/types";
+import { openUrl } from "@/utils/url";
+import { EmptyState } from "@/components/common/EmptyState";
+import { ActionButton } from "@/components/common/ActionButton";
 import { TicketCard } from "./TicketCard";
 
 interface Props {

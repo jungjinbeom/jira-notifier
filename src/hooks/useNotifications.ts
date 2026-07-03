@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import type { Dispatch, SetStateAction } from "react";
-import type { JiraNotification, PollingStatus } from "../types";
-import { api } from "../api";
+import type { JiraNotification, PollingStatus } from "@/types";
+import { api } from "@/api";
 import { useTauriEvent } from "./useTauriEvent";
 
 interface Params {

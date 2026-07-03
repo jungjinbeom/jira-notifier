@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import type { JiraConfig } from "../types";
-import { api } from "../api";
+import type { JiraConfig } from "@/types";
+import { api } from "@/api";
 import type { ToastType } from "./useToast";
 
 interface Params {

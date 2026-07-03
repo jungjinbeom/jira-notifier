@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import type { UnassignedTicket } from "../types";
-import { api } from "../api";
+import type { UnassignedTicket } from "@/types";
+import { api } from "@/api";
 import { useTauriEvent } from "./useTauriEvent";
 import type { ToastType } from "./useToast";
 
