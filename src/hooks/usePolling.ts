@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
-import type { PollingStatus } from "@/types";
+import { useCallback } from "react";
+import { useSuspenseQuery, useMutation } from "@tanstack/react-query";
 import { api } from "@/api";
+import { queryClient, queryKeys } from "@/queryClient";
 import type { ToastType } from "./useToast";
 
 interface Params {
@@ -8,57 +9,44 @@ interface Params {
   showMessage: (text: string, type: ToastType) => void;
 }
 
-const INITIAL_STATUS: PollingStatus = {
-  is_active: false,
-  last_check: null,
-  notification_count: 0,
-  unread_count: 0,
-};
-
-/** 폴링 상태(status) 보유 + 시작/중지 + 5초 주기 갱신 */
+/**
+ * 폴링 상태(status) 보유 + 시작/중지.
+ * setInterval 대신 useSuspenseQuery의 refetchInterval(5초)로 주기 갱신한다.
+ */
 export const usePolling = ({ setLoading, showMessage }: Params) => {
-  const [status, setStatus] = useState<PollingStatus>(INITIAL_STATUS);
+  const { data: status } = useSuspenseQuery({
+    queryKey: queryKeys.status,
+    queryFn: api.getStatus,
+    refetchInterval: 5000,
+  });
 
-  const loadStatus = useCallback(async () => {
-    try {
-      setStatus(await api.getStatus());
-    } catch (e) {
-      console.error("상태 로드 실패:", e);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadStatus();
-    const interval = setInterval(loadStatus, 5000);
-    return () => clearInterval(interval);
-  }, [loadStatus]);
-
-  const startPolling = useCallback(async () => {
-    setLoading(true);
-    try {
-      const result = await api.startPolling();
+  const startMutation = useMutation({
+    mutationFn: api.startPolling,
+    onMutate: () => setLoading(true),
+    onSuccess: (result) => {
       showMessage(result, "success");
-      await loadStatus();
-    } catch (e) {
-      showMessage(`${e}`, "error");
-    } finally {
-      setLoading(false);
-    }
-  }, [loadStatus, setLoading, showMessage]);
+      queryClient.invalidateQueries({ queryKey: queryKeys.status });
+    },
+    onError: (e) => showMessage(`${e}`, "error"),
+    onSettled: () => setLoading(false),
+  });
 
-  const stopPolling = useCallback(async () => {
-    setLoading(true);
-    try {
-      const result = await api.stopPolling();
+  const stopMutation = useMutation({
+    mutationFn: api.stopPolling,
+    onMutate: () => setLoading(true),
+    onSuccess: (result) => {
       showMessage(result, "info");
-      await loadStatus();
-    } catch (e) {
-      showMessage(`${e}`, "error");
-    } finally {
-      setLoading(false);
-    }
-  }, [loadStatus, setLoading, showMessage]);
+      queryClient.invalidateQueries({ queryKey: queryKeys.status });
+    },
+    onError: (e) => showMessage(`${e}`, "error"),
+    onSettled: () => setLoading(false),
+  });
 
-  // status/setStatus는 알림 카운트 갱신을 위해 상위(파사드)에서 useNotifications로 전달된다
-  return { status, setStatus, startPolling, stopPolling };
-}
+  const startPolling = useCallback(
+    () => startMutation.mutate(),
+    [startMutation]
+  );
+  const stopPolling = useCallback(() => stopMutation.mutate(), [stopMutation]);
+
+  return { status, startPolling, stopPolling };
+};

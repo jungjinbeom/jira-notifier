@@ -15,12 +15,12 @@ export const useJira = () => {
   const { message, showMessage } = useToast();
   const [loading, setLoading] = useState(false);
 
-  const { status, setStatus, startPolling, stopPolling } = usePolling({
+  const { status, startPolling, stopPolling } = usePolling({
     setLoading,
     showMessage,
   });
   const { notifications, markAsRead, markAllRead, clearNotifications } =
-    useNotifications({ setStatus });
+    useNotifications();
   const { config, saveConfig, testConnection } = useConfig({
     setLoading,
     showMessage,
