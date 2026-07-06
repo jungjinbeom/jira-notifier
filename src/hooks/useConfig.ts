@@ -1,6 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
+import { useSuspenseQuery, useMutation } from "@tanstack/react-query";
 import type { JiraConfig } from "@/types";
 import { api } from "@/api";
+import { queryClient, queryKeys } from "@/queryClient";
 import type { ToastType } from "./useToast";
 
 interface Params {
@@ -8,56 +10,40 @@ interface Params {
   showMessage: (text: string, type: ToastType) => void;
 }
 
-const EMPTY_CONFIG: JiraConfig = {
-  base_url: "",
-  email: "",
-  api_token: "",
-  username: "",
-  display_name: "",
-  poll_interval_secs: 60,
-};
-
 /** Jira 설정 상태 + 저장/연결테스트 */
 export const useConfig = ({ setLoading, showMessage }: Params) => {
-  const [config, setConfig] = useState<JiraConfig>(EMPTY_CONFIG);
+  const { data: config } = useSuspenseQuery({
+    queryKey: queryKeys.config,
+    queryFn: api.getConfig,
+  });
 
-  useEffect(() => {
-    api
-      .getConfig()
-      .then(setConfig)
-      .catch((e) => console.error("설정 로드 실패:", e));
-  }, []);
+  const saveMutation = useMutation({
+    mutationFn: api.saveConfig,
+    onMutate: () => setLoading(true),
+    onSuccess: (_result, newConfig) => {
+      queryClient.setQueryData(queryKeys.config, newConfig);
+      showMessage("설정이 저장되었습니다", "success");
+    },
+    onError: (e) => showMessage(`저장 실패: ${e}`, "error"),
+    onSettled: () => setLoading(false),
+  });
+
+  const testMutation = useMutation({
+    mutationFn: api.testConnection,
+    onMutate: () => setLoading(true),
+    onSuccess: (result) => showMessage(result, "success"),
+    onError: (e) => showMessage(`${e}`, "error"),
+    onSettled: () => setLoading(false),
+  });
 
   const saveConfig = useCallback(
-    async (newConfig: JiraConfig) => {
-      setLoading(true);
-      try {
-        await api.saveConfig(newConfig);
-        setConfig(newConfig);
-        showMessage("설정이 저장되었습니다", "success");
-      } catch (e) {
-        showMessage(`저장 실패: ${e}`, "error");
-      } finally {
-        setLoading(false);
-      }
-    },
-    [setLoading, showMessage]
+    (newConfig: JiraConfig) => saveMutation.mutate(newConfig),
+    [saveMutation]
   );
-
   const testConnection = useCallback(
-    async (testConfig: JiraConfig) => {
-      setLoading(true);
-      try {
-        const result = await api.testConnection(testConfig);
-        showMessage(result, "success");
-      } catch (e) {
-        showMessage(`${e}`, "error");
-      } finally {
-        setLoading(false);
-      }
-    },
-    [setLoading, showMessage]
+    (testConfig: JiraConfig) => testMutation.mutate(testConfig),
+    [testMutation]
   );
 
   return { config, saveConfig, testConnection };
-}
+};

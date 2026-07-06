@@ -41,8 +41,7 @@ export interface BadgesValue {
   assignedCount: number;
   unassignedCount: number;
 }
-export const [BadgesContext, useBadges] =
-  createSafeContext<BadgesValue>("Badges");
+export const [BadgesContext, useBadges] = createSafeContext<BadgesValue>("Badges");
 
 /** 헤더: 모니터링 상태 + 시작/중지. */
 export interface HeaderValue {
