@@ -12,6 +12,47 @@ fn parse_jira_datetime(s: &str) -> Option<DateTime<Utc>> {
         .ok()
 }
 
+/// 목록(알림/배정/미배정)에서 제외할 이슈인지 판정한다.
+/// - 취소 상태 티켓
+/// - 에픽 이슈 타입
+///
+/// JQL로 거르면 해당 프로젝트에 "취소"/"에픽" 값이 없을 때 Jira가 400을 반환해
+/// 조회 전체가 실패하므로, 응답을 받은 뒤 이름으로 판정한다.
+/// 워크플로/이슈 타입 이름이 한글일 수도 영문일 수도 있어 둘 다 본다.
+fn is_excluded_issue(issue: &JiraIssue) -> bool {
+    let status = issue
+        .fields
+        .status
+        .as_ref()
+        .and_then(|s| s.name.as_deref())
+        .unwrap_or_default()
+        .to_lowercase();
+    let issue_type = issue
+        .fields
+        .issue_type
+        .as_ref()
+        .and_then(|t| t.name.as_deref())
+        .unwrap_or_default()
+        .to_lowercase();
+
+    let is_cancelled = status.contains("취소") || status.contains("cancel");
+    let is_epic = issue_type.contains("에픽") || issue_type.contains("epic");
+
+    if is_cancelled || is_epic {
+        // 폴링마다 수십 줄이 쌓이므로 debug 레벨 (RUST_LOG=debug 로 확인)
+        log::debug!(
+            "[제외] {} (상태='{}', 타입='{}', 취소={} 에픽={})",
+            issue.key,
+            status,
+            issue_type,
+            is_cancelled,
+            is_epic
+        );
+    }
+
+    is_cancelled || is_epic
+}
+
 /// Jira 연결 설정
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct JiraConfig {
@@ -62,10 +103,17 @@ pub struct IssueFields {
     pub updated: Option<String>,
     pub comment: Option<CommentContainer>,
     pub status: Option<IssueStatus>,
+    #[serde(rename = "issuetype")]
+    pub issue_type: Option<IssueType>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct IssueStatus {
+    pub name: Option<String>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct IssueType {
     pub name: Option<String>,
 }
 
@@ -174,6 +222,11 @@ impl JiraClient {
         let mut notifications = Vec::new();
 
         for issue in &issues {
+            // 취소 티켓 / 에픽은 알림 목록에서 제외
+            if is_excluded_issue(issue) {
+                continue;
+            }
+
             let summary = issue
                 .fields
                 .summary
@@ -221,6 +274,11 @@ impl JiraClient {
         let mut notifications = Vec::new();
 
         for issue in &issues {
+            // 취소 티켓 / 에픽은 알림 목록에서 제외
+            if is_excluded_issue(issue) {
+                continue;
+            }
+
             if let Some(ref comment_container) = issue.fields.comment {
                 for comment in &comment_container.comments {
                     let body = comment.body.clone().unwrap_or_default();
@@ -312,6 +370,7 @@ impl JiraClient {
     fn to_tickets(&self, issues: &[JiraIssue]) -> Vec<UnassignedTicket> {
         issues
             .iter()
+            .filter(|issue| !is_excluded_issue(issue))
             .map(|issue| UnassignedTicket {
                 key: issue.key.clone(),
                 summary: issue
@@ -349,8 +408,14 @@ impl JiraClient {
         log::info!("[미배정] JQL: {}", jql);
 
         let issues = self.search_issues(&jql).await?;
-        log::info!("[미배정] 반환 티켓 수: {}", issues.len());
-        Ok(self.to_tickets(&issues))
+        let tickets = self.to_tickets(&issues);
+        log::info!(
+            "[미배정] 반환 티켓 수: {} (취소/에픽 {}건 제외 후 {}건)",
+            issues.len(),
+            issues.len() - tickets.len(),
+            tickets.len()
+        );
+        Ok(tickets)
     }
 
     /// 특정 프로젝트에서 본인이 담당자이고 "해야 할 일/진행 중" 상태인 티켓 조회
@@ -366,8 +431,14 @@ impl JiraClient {
         log::info!("[배정] JQL: {}", jql);
 
         let issues = self.search_issues(&jql).await?;
-        log::info!("[배정] 반환 티켓 수: {}", issues.len());
-        Ok(self.to_tickets(&issues))
+        let tickets = self.to_tickets(&issues);
+        log::info!(
+            "[배정] 반환 티켓 수: {} (취소/에픽 {}건 제외 후 {}건)",
+            issues.len(),
+            issues.len() - tickets.len(),
+            tickets.len()
+        );
+        Ok(tickets)
     }
 
     /// JQL로 이슈 검색
@@ -381,8 +452,9 @@ impl JiraClient {
             .headers(self.auth_headers())
             .query(&[
                 ("jql", jql),
-                ("maxResults", "50"),
-                ("fields", "summary,assignee,reporter,updated,status"),
+                // 취소/에픽을 응답 수신 후 걸러내므로 여유분을 두고 조회
+                ("maxResults", "100"),
+                ("fields", "summary,assignee,reporter,updated,status,issuetype"),
             ])
             .send()
             .await
@@ -414,7 +486,7 @@ impl JiraClient {
             .query(&[
                 ("jql", jql),
                 ("maxResults", "20"),
-                ("fields", "summary,assignee,updated,status,comment"),
+                ("fields", "summary,assignee,updated,status,comment,issuetype"),
             ])
             .send()
             .await
