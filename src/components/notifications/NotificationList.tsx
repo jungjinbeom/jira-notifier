@@ -16,6 +16,8 @@ export const NotificationList = () => {
     openUrl(notification.url);
   };
 
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
   if (notifications.length === 0) {
     return (
       <EmptyState
@@ -31,6 +33,7 @@ export const NotificationList = () => {
       <div className="notifications-header">
         <span style={{ fontSize: "13px", color: "var(--text-secondary)" }}>
           총 {notifications.length}건
+          {unreadCount > 0 && ` · 안읽음 ${unreadCount}건`}
         </span>
         <div className="notifications-header-actions">
           <ActionButton onClick={onMarkAllRead}>모두 읽음</ActionButton>

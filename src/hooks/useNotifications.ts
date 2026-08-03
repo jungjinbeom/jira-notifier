@@ -38,16 +38,17 @@ export const useNotifications = () => {
     }));
   });
 
-  // 읽은 알림은 목록에서 제거한다(이후 다시 표시되지 않음).
+  // 읽은 알림은 목록에 남기고 read 플래그만 세운다(이력 조회용).
+  // 목록을 비우는 것은 "전체 삭제"만 한다.
   const markAsReadMutation = useMutation({
     mutationFn: api.markAsRead,
     onSuccess: (_r, id) => {
       queryClient.setQueryData<JiraNotification[]>(
         queryKeys.notifications,
-        (prev) => (prev ?? []).filter((n) => n.id !== id)
+        (prev) =>
+          (prev ?? []).map((n) => (n.id === id ? { ...n, read: true } : n))
       );
       patchStatusCounts((prev) => ({
-        notification_count: Math.max(0, prev.notification_count - 1),
         unread_count: Math.max(0, prev.unread_count - 1),
       }));
     },
@@ -57,8 +58,11 @@ export const useNotifications = () => {
   const markAllReadMutation = useMutation({
     mutationFn: api.markAllRead,
     onSuccess: () => {
-      queryClient.setQueryData(queryKeys.notifications, []);
-      patchStatusCounts(() => ({ notification_count: 0, unread_count: 0 }));
+      queryClient.setQueryData<JiraNotification[]>(
+        queryKeys.notifications,
+        (prev) => (prev ?? []).map((n) => ({ ...n, read: true }))
+      );
+      patchStatusCounts(() => ({ unread_count: 0 }));
     },
     onError: (e) => console.error("읽음 처리 실패:", e),
   });

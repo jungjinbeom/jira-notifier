@@ -20,12 +20,7 @@
         "decorations": true,
         "visible": true
       }
-    ],
-    "trayIcon": {
-      "iconPath": "icons/icon.png",
-      "iconAsTemplate": false,
-      "tooltip": "Jira Notifier"
-    }
+    ]
   },
   "bundle": {
     "active": true,
