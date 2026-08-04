@@ -444,21 +444,30 @@ async fn mark_all_read(
     Ok(())
 }
 
-/// 알림 전체 삭제 (이력까지 비우는 명시적 초기화)
+/// 알림 전체 삭제: 보이는 목록만 비운다.
+///
+/// seen_ids(재알림 방지 이력)는 절대 비우지 않는다. 여기를 비우면 이미 확인하고
+/// 지운 티켓이 다음 폴링에서 다시 새 알림으로 잡혀 되살아난다
+/// (알림 id가 `assign-{issue_key}`처럼 이슈당 고정이고, 티켓이 한 번만 더
+/// updated 되면 JQL에 다시 걸리기 때문).
 #[tauri::command]
 async fn clear_notifications(
     app: AppHandle,
     state: State<'_, AppState>,
 ) -> Result<(), String> {
-    {
+    let cleared_ids: Vec<String> = {
         let mut notifications = state.notifications.lock().await;
+        let ids = notifications.iter().map(|n| n.id.clone()).collect();
+        log::info!("[전체 삭제] {}건 삭제 (재알림 이력은 유지)", notifications.len());
         notifications.clear();
         save_notifications(&notifications);
-    }
+        ids
+    };
     {
+        // 지운 알림의 id를 이력에 확실히 남겨 다시 뜨지 않게 한다.
         let mut seen = state.seen_ids.lock().await;
-        seen.clear();
-        save_seen(&seen); // 디스크 이력도 비움
+        seen.extend(cleared_ids);
+        save_seen(&seen);
     }
     refresh_tray(&app, &state.handles()).await;
     Ok(())
