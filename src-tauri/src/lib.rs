@@ -10,7 +10,7 @@ use std::sync::Arc;
 use tauri::{
     image::Image,
     menu::{Menu, MenuItem, PredefinedMenuItem},
-    tray::{TrayIconBuilder, TrayIconEvent},
+    tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
     AppHandle, Emitter, Manager, State, WindowEvent,
 };
 use tauri_plugin_shell::ShellExt;
@@ -678,8 +678,15 @@ fn setup_tray(app: &AppHandle) -> tauri::Result<()> {
                 _ => {}
             }
         })
+        // 좌클릭을 뗄 때만 창을 연다. `Click { .. }`로 전부 받으면 우클릭에서도
+        // 창이 떠올라 포커스를 뺏고, 그 순간 OS 컨텍스트 메뉴가 닫혀버린다.
         .on_tray_icon_event(|tray, event| {
-            if let TrayIconEvent::Click { .. } = event {
+            if let TrayIconEvent::Click {
+                button: MouseButton::Left,
+                button_state: MouseButtonState::Up,
+                ..
+            } = event
+            {
                 show_main_window(tray.app_handle());
             }
         })
